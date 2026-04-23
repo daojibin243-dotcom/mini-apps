@@ -1,0 +1,48 @@
+.timer-box {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.time-input input {
+  width: 60px;
+  font-size: 20px;
+  text-align: center;
+}
+
+#display {
+  font-size: 48px;
+  margin: 20px 0;
+}
+
+.buttons button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #4a69bd;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  background: #3b55a0;
+}
+
+#start {
+  background: #4a69bd;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
