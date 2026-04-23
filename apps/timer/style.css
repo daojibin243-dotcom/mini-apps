@@ -46,3 +46,17 @@ footer {
   font-weight: bold;
   font-size: 18px;
 }
+
+body.work {
+  background: #ffecec;
+}
+
+body.break {
+  background: #e8f7ff;
+}
+
+.credit {
+  font-size: 12px;
+  color: #888;
+  margin-top: 10px;
+}
