@@ -37,6 +37,19 @@ function updateDisplay() {
     String(s).padStart(2, "0");
 }
 
+//textContentを制御する関数
+function setStatus(text, type) {
+  status.textContent = text;
+
+  // 既存の状態クラスを全部消す
+  status.classList.remove("status-running", "status-break", "status-error");
+
+  // 新しい状態を追加
+  if (type) {
+    status.classList.add(type);
+  }
+}
+
 
 // ===== スタートボタンを押したときの処理 =====
 document.getElementById("start").onclick = () => {
@@ -58,13 +71,13 @@ document.getElementById("start").onclick = () => {
 
   // 時間が0以下ならエラー表示して処理を止める
   if (totalSeconds <= 0) {
-    status.textContent = "時間を入力してください";
+    setStatus("時間を入力してください", "status-error");
     return;
   }
 
   // 表示時間更新
   updateDisplay();
-  status.textContent = "タイマー実行中";
+  setStatus("タイマー実行中", "status-running");
 
   endTime = Date.now() + totalSeconds * 1000;
 
@@ -73,8 +86,9 @@ document.getElementById("start").onclick = () => {
 
     // 現在時刻から「終了時刻（endTime）」までの残り時間を計算（秒単位）
     // Date.now() は現在時刻（ミリ秒）
-    // 差を1000で割って秒に変換し、小数は切り捨てる
-    const remaining = Math.floor((endTime - Date.now()) / 1000);
+    // 差を1000で割って秒に変換
+    // floerだと.99時点で切り捨てるので1秒飛んでしまう,なのでceilを使う
+    const remaining = Math.ceil((endTime - Date.now()) / 1000);
 
      // 計算した残り時間を保存
     totalSeconds = remaining;
@@ -88,6 +102,8 @@ document.getElementById("start").onclick = () => {
       // タイマーを停止
       clearInterval(timer);
       timer = null;
+
+      updateDisplay();
 
       //音を鳴らす
       //再生位置を0秒に
@@ -107,15 +123,17 @@ document.getElementById("start").onclick = () => {
         // 作業時間が終わった → 休憩に切り替え
         mode = "break";
         totalSeconds = 5 * 60;
-        status.textContent = "休憩スタート！";
+        setStatus("休憩中", "status-break");
       } else if (mode === "break") {
         // 休憩が終わった → 作業に戻る
         mode = "work";
         totalSeconds = 25 * 60;
-        status.textContent = "作業スタート！";
+        setStatus("作業中", "status-running");
+
       } else {
         // 通常モードの場合は通知だけして終了
-        alert("時間です！");
+        //alertだと表示が1秒ずれる、クリックが面倒の理由でテキスト表示に
+        status.textContent = "時間です！";
         return;
       }
 
@@ -174,6 +192,6 @@ document.getElementById("reset").onclick = () => {
   updateDisplay();
 
   // 状態表示
-  status.textContent = "時間を設定してスタート";
+  setStatus("時間を設定してスタート", null);
 };
 

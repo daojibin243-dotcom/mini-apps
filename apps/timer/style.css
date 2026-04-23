@@ -14,12 +14,6 @@
   margin: 20px 0;
 }
 
-.buttons button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-}
-
 footer {
   text-align: center;
   margin-top: 50px;
@@ -29,7 +23,6 @@ footer {
 .back-btn {
   display: inline-block;
   padding: 10px 20px;
-  background: #4a69bd;
   color: white;
   text-decoration: none;
   border-radius: 6px;
@@ -59,4 +52,128 @@ body.break {
   font-size: 12px;
   color: #888;
   margin-top: 10px;
+}
+
+/* ===== ボタン共通デザイン ===== */
+.buttons button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  background: #4a69bd;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ホバー（乗った時） */
+button:hover {
+  background: #3b55a0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* クリック（押した時） */
+button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+#start {
+  background: #38ada9;
+  font-weight: bold;
+}
+
+#start:hover {
+  background: #2e8b87;
+}
+
+#status {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* 状態ごと */
+.status-running {
+  color: #38ada9;
+}
+
+.status-break {
+  color: #e58e26;
+}
+
+.status-error {
+  color: #e55039;
+}
+
+/*タイマー*/
+.timer-box {
+  text-align: center;
+  margin: 50px auto;
+  padding: 30px;
+  max-width: 300px;
+
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/*ポモドーロボタン*/
+.pomodoro-buttons {
+  margin-bottom: 10px;
+}
+
+.pomodoro-buttons button {
+  background: #f6b93b;
+}
+
+.pomodoro-buttons button:hover {
+  background: #e1a12c;
+}
+
+/*入力欄*/
+.time-input input {
+  width: 60px;
+  font-size: 20px;
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* スタート（成功・進行） */
+#start {
+  background: #38ada9;
+}
+#start:hover {
+  background: #2e8b87;
+}
+
+/* ストップ（警告系） */
+#stop {
+  background: #e55039;
+}
+#stop:hover {
+  background: #c4452d;
+}
+
+/* リセット（ニュートラル） */
+#reset {
+  background: #576574;
+}
+#reset:hover {
+  background: #3d4b55;
+}
+
+/* 戻る（リンク系） */
+.back-btn {
+  background: #6c5ce7;
+}
+.back-btn:hover {
+  background: #574b90;
 }
