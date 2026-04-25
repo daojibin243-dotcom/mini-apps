@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>MiniApps ToDo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
+    }
+
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    ul {
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    /* エラーメッセージ */
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    /* ヒント表示 */
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <h2>ToDoリスト</h2>
+
+  <div class="input-area">
+    <input type="text" id="taskInput" placeholder="やることを入力">
+    <button onclick="handleAddTask()">追加</button>
+  </div>
+
+  <!-- エラーメッセージ表示 -->
+  <div id="errorMessage" class="error"></div>
+
+  <!-- 操作ヒント -->
+  <div class="hint">※ タスクをクリックすると完了になります</div>
+
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+  // =============================
+  // 要素取得
+  // =============================
+  const taskInput = document.getElementById("taskInput");
+  const taskList = document.getElementById("taskList");
+  const errorMessage = document.getElementById("errorMessage");
+
+  // =============================
+  // 入力チェック
+  // =============================
+  function validateInput(text) {
+    // 空文字の場合エラーを表示する
+    if (text.trim() === "") {
+      showError("タスクを入力してください");
+      return false;
+    }
+
+    // エラーをクリア
+    clearError();
+    return true;
+  }
+
+  // =============================
+  // エラー表示
+  // =============================
+  function showError(message) {
+    errorMessage.textContent = message;
+  }
+
+  function clearError() {
+    errorMessage.textContent = "";
+  }
+
+  // =============================
+  // タスク作成
+  // =============================
+  function createTaskElement(text) {
+    const li = document.createElement("li");
+
+    // テキスト部分
+    const span = document.createElement("span");
+    span.textContent = text;
+
+    // クリックで完了切り替え
+    span.onclick = function () {
+      toggleTask(span);
+    };
+
+    // 削除ボタン
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "削除";
+
+    deleteBtn.onclick = function () {
+      deleteTask(li);
+    };
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+
+    return li;
+  }
+
+  // =============================
+  // 完了切り替え
+  // =============================
+  function toggleTask(element) {
+    element.classList.toggle("done");
+  }
+
+  // =============================
+  // 削除処理
+  // =============================
+  function deleteTask(element) {
+    element.remove();
+  }
+
+  // =============================
+  // 入力リセット
+  // =============================
+  function resetInput() {
+    taskInput.value = "";
+  }
+
+  // =============================
+  // メイン処理
+  // =============================
+  function handleAddTask() {
+    const text = taskInput.value;
+
+    // ① 入力チェック
+    if (!validateInput(text)) return;
+
+    // ② タスク生成
+    const taskElement = createTaskElement(text);
+
+    // ③ DOMに追加
+    taskList.appendChild(taskElement);
+
+    // ④ 入力リセット
+    resetInput();
+  }
+</script>
+
+</body>
+</html>

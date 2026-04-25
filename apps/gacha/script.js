@@ -26,6 +26,7 @@ function gacha() {
   //  return sum + a.rate;
   // }, 0);
   // reduceの第2引数は初期値、今回は0からスタートしている
+  // reduceとは「減らす」という意味の英語で、配列の要素を順番に処理して1つの値に「減らす」イメージ
   const total = animals.reduce((sum, a) => sum + a.rate, 0);
 
   // 0〜total未満のランダムな数を作る
@@ -46,18 +47,19 @@ function gacha() {
   }
 }
 
+//ボタンが押された時の処理
 button.addEventListener("click", () => {
   result.textContent = "抽選中...";
 
   setTimeout(() => {
     const item = gacha();
 
-    //まず全部リセット(ガチャを引くたびにスタイルが残るのを防ぐため)
-    result.className = "";           // クラス削除
-    result.style.background = "";    // 背景リセット
+    //まずCSSをリセット(ガチャを引くたびにスタイルが残るのを防ぐため)
+    result.className = "";
+    result.style.background = "";
     result.style.transform = "scale(1)";
 
-    // 表示
+    // 抽選結果にCSSクラスを追加してスタイルを適用
     result.innerHTML = `
     <div class="gacha-card rarity-${item.rarity}">
         <div class="rarity-text">${item.rarity}</div>
@@ -71,16 +73,19 @@ button.addEventListener("click", () => {
       result.classList.add("ssr-effect");
 
       result.style.transform = "scale(1.2)";
+
+      // エフェクトを付ける、0.15秒後に拡大する
       setTimeout(() => {
         result.style.transform = "scale(1)";
       }, 150);
-
+      // エフェクトを3秒後に消す
       setTimeout(() => {
         result.classList.remove("ssr-effect");
-      }, 1800);
+      }, 3000);
     }
 
   }, 800);
+  // ボタンを無効にする
   button.disabled = true;
 
   // 1秒後にボタンを再度有効にする(連打防止)
@@ -89,10 +94,10 @@ setTimeout(() => {
 }, 1000);
 });
 
+//=====排出確率の表示部分=====
 const rateList = document.getElementById("rateList");
 
-// 合計を出す（これが基準になる）
-// 例：5 + 15 + 80 = 100
+// 合計を出す
 const total = animals.reduce((sum, a) => sum + a.rate, 0);
 
 // 排出確率を1件ずつ表示

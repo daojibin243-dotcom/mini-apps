@@ -1,22 +1,34 @@
 /* =========================
   リセット・基本
 ========================= */
+
+/*paddingとborderを幅と高さに含める*/
 * {
   box-sizing: border-box;
 }
 
 body {
+  /*ブラウザ標準の余白を消す*/
   margin: 0;
+  /*画面の高さ100%を確保*/
   min-height: 100vh;
+  /*グラデーション背景*/
+  /*radial-gradient → 円形グラデーション
+  circle at top → 上から広がる*/
   background: radial-gradient(circle at top, #fff7f0, #f4e8ff 35%, #cfe4ff 100%);
+  /*文字の色*/
   color: #2c2c3b;
+  /*フォント*/
   font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
 }
 
+/*body以下の要素全てに*/
 body > * {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 16px;
+  max-width: 640px;   /* コンテンツの横幅を最大640pxに制限（広がりすぎ防止） */
+
+  margin: 0 auto;     /* 左右の余白を自動にして中央寄せ（横中央に配置） */
+
+  padding: 16px;      /* 内側の余白（文字や要素が端にくっつかないようにする） */
 }
 
 /* =========================
@@ -30,7 +42,7 @@ h1 {
 }
 
 h2 {
-    margin: 32px auto 16px;
+  margin: 32px auto 16px;
   font-size: 1.2rem;
   letter-spacing: 0.04em;
   text-align: center;
@@ -40,12 +52,18 @@ h2 {
   ガチャ表示
 ========================= */
 #gachaBox {
+  /* 上下に28pxの余白、左右はautoで中央寄せ */
   margin: 28px auto;
   padding: 28px 22px;
   border-radius: 28px;
   background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(243,237,255,0.95));
   box-shadow: 0 24px 50px rgba(108, 99, 255, 0.14);
+
+  /* 最低高さを確保 → 中身が少なくてもボックスが潰れない */
   min-height: 180px;
+
+  /* CSS Gridレイアウトを使用 */
+  /* place-items: centerは中身を縦・横ともに中央に配置 → justify + align をまとめた書き方 */
   display: grid;
   place-items: center;
 }
@@ -61,16 +79,38 @@ h2 {
   ガチャカード
 ========================= */
 .gacha-card {
+  /* 横幅を親要素いっぱいに広げる */
   width: 100%;
+
+  /* 高さを固定してレイアウトを安定させる */
   height: 140px;
+
+  /* 角を丸くしてカード風の見た目にする */
   border-radius: 16px;
+
+  /* Flexboxレイアウトを使用 */
   display: flex;
+  /* 要素を縦方向に並べる（上から順） */
   flex-direction: column;
+  /* 縦方向の中央揃え */
   justify-content: center;
+  /* 横方向の中央揃え */
   align-items: center;
+
+  /* 要素同士の間隔を6pxあける */
   gap: 6px;
+
+  /* テキストを中央揃えにする */
   text-align: center;
+
+  /* 内側の余白（コンテンツが端にくっつかないようにする） */
   padding: 10px;
+
+  /* 擬似要素（::afterなど）を使うための基準位置
+  擬似要素 = HTMLを書かずに要素を追加できる仕組み
+  ::before
+  ::afterなどを使用するときに必要
+  */
   position: relative;
 }
 
