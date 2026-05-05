@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON整形ツール</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>JSON整形ツール</h1>
+
+  <textarea id="input" placeholder="ここにJSONを入力"></textarea>
+
+  <div class="buttons">
+    <button class="format" onclick="formatJSON()">整形</button>
+    <button class="minify" onclick="minifyJSON()">圧縮</button>
+    <button class="copy" onclick="copyJSON()">コピー</button>
+    <button class="clear" onclick="clearJSON()">クリア</button>
+    <button class="sample" onclick="setSample()">JSONサンプル</button>
+  </div>
+
+  <textarea id="output" placeholder="結果がここに表示されます"></textarea>
+
+  <div id="message"></div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

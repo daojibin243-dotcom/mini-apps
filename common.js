@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>タイマー</title>
+  <link rel="stylesheet" href="../../css/common.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<header>
+  <h1>タイマー</h1>
+</header>
+
+<main>
+  <div class="timer-box">
+    <p id="status">時間を設定してスタート</p>
+    <div class="time-input">
+      <input type="number" id="minutes" placeholder="分" min="0">
+      <span>:</span>
+      <input type="number" id="seconds" placeholder="秒" min="0" max="59">
+    </div>
+
+    <h2 id="display">00:00</h2>
+
+    <div class="buttons">
+      <div class="pomodoro-buttons">
+        <button id="work">作業25分</button>
+        <button id="break">休憩5分</button>
+      </div>
+      <button id="start">スタート</button>
+      <button id="stop">ストップ</button>
+      <button id="reset">リセット</button>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <a href="../../index.html" class="back-btn">← トップへ戻る</a>
+
+  <p class="credit">
+    効果音：<a href="https://otologic.jp/" target="_blank">OtoLogic</a>
+  </p>
+</footer>
+
+<script src="../../js/common.js"></script>
+<script src="./script.js"></script>
+</body>
+</html>
