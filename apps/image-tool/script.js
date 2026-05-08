@@ -1,392 +1,269 @@
-const upload = document.getElementById("upload");
-
-const beforeCanvas = document.getElementById("beforeCanvas");
-const beforeCtx = beforeCanvas.getContext("2d");
-
-const afterImage = document.getElementById("afterImage");
-
-const widthInput = document.getElementById("width");
-const heightInput = document.getElementById("height");
-
-const qualitySlider = document.getElementById("quality");
-const qualityValue = document.getElementById("qualityValue");
-const fileSizeText = document.getElementById("fileSize");
-
+// ===============================
+// 要素取得
+// ===============================
+// HTMLのidを使って、JavaScriptから操作したい要素を取得します。
 const uploadArea = document.getElementById("uploadArea");
 const fileInput = document.getElementById("upload");
 
+// 比較表示に使う2枚の画像です。
+const beforeImage = document.getElementById("beforeImage");
+const afterImage = document.getElementById("afterImage");
+
+// ダウンロード時のサイズを指定する入力欄です。
+const widthInput = document.getElementById("width");
+const heightInput = document.getElementById("height");
+
+// 品質スライダーと、画面に表示する数値・容量です。
+const qualitySlider = document.getElementById("quality");
+const qualityValue = document.getElementById("qualityValue");
+const fileSizeText = document.getElementById("fileSize");
+const estimatedSizeText = document.getElementById("estimatedSize");
+
+const downloadBtn = document.getElementById("downloadBtn");
+
+const lockRatioCheckbox = document.getElementById("lockRatio");
+
+// Before/After比較用のスライダーです。
+const compareSlider = document.getElementById("compareSlider");
+
+const compare = document.querySelector(".compare");
+const overlay = document.querySelector(".overlay");
+
+// ===============================
+// 状態
+// ===============================
+// 選択された画像を読み込むためのImageオブジェクトです。
 let img = new Image();
-let currentBlobUrl = null;
 
-// ===============================
-// 「ファイルが選択されたとき」に動く処理
-// ===============================
-//<input type="file" id="upload" accept="image/*">から察知
-upload.addEventListener("change", (e) => {
+// ダウンロード用に作った画像データを保存しておきます。
+let currentBlob = null;
 
-  // ユーザーが選んだファイルの1つ目を取得
-  const file = e.target.files[0];
+// プレビュー用のURLです。作り直すたびに古いURLは破棄します。
+let previewBlobUrl = null;
 
-  // ファイルが選ばれていない場合は処理しない
-  if (!file) return;
-
-  // 画像じゃない場合は弾く
-  if (!file.type.startsWith("image/")) {
-    alert("画像ファイルを選択してください");
-    return;
-  }
-
-  // ファイルを読み込むための専用オブジェクトを作成
-  const reader = new FileReader();
-
-  // ファイルの読み込みが完了したときに実行される処理
-  reader.onload = (event) => {
-
-    // 読み込んだ画像データ（URL形式）をimgタグにセット
-    // → これで画面に画像が表示される
-    img.src = event.target.result;
-  };
-
-  // ファイルを「データURL形式」で読み込む
-  // （画像を文字列として扱えるようにする）
-  reader.readAsDataURL(file);
-});
-
-// ===============================
-// 画像の読み込みが完了したときに実行される処理、初期描画にも
-// ===============================
-img.onload = () => {
-
-  // ✅Beforeに元画像をそのまま表示する
-
-  // canvasの横幅を、画像の横幅と同じにする
-  beforeCanvas.width = img.width;
-
-  // canvasの高さを、画像の高さと同じにする
-  beforeCanvas.height = img.height;
-
-  // canvasに画像を描画（左上(0,0)からそのまま表示）
-  beforeCtx.drawImage(img, 0, 0);
-
-
-  // ✅入力欄に初期値をセットする
-
-  // 幅の入力欄に「元画像の幅」を入れる
-  widthInput.value = img.width;
-
-  // 高さの入力欄に「元画像の高さ」を入れる
-  heightInput.value = img.height;
-
-
-  // ✅After（加工後画像）を表示する処理を実行
-  // → リサイズや圧縮のプレビューがここで作られる
-  draw();
-};
+let aspectRatio = null; // 比率を保持
 
 
 // ===============================
-// 入力が変更されたら自動で画面を更新する処理
+// イベント登録
 // ===============================
 
-// 幅（width）の入力欄に値を入力したとき
-widthInput.addEventListener("input", draw);
-// → 数字を変えるたびに draw() が実行される
-// → 画像の横幅がリアルタイムで変わる
-
-
-// 高さ（height）の入力欄に値を入力したとき
-heightInput.addEventListener("input", draw);
-// → 数字を変えるたびに draw() が実行される
-// → 画像の縦の大きさがリアルタイムで変わる
-
-
-// 品質スライダーを動かしたとき
-qualitySlider.addEventListener("input", () => {
-
-  // 現在のスライダーの値（例：0.8）を画面に表示する
-  qualityValue.textContent = qualitySlider.value;
-
-  // draw() を実行して画像を更新
-  draw();
-});
-
-
-// ===============================
-// 画像アップロード部分
-// ===============================
-
-// アップロードエリアをクリックしたとき
-uploadArea.addEventListener("click", () => {
-
-  // 隠してある <input type="file"> を強制的にクリックする
-  // → ファイル選択画面が開く
-  fileInput.click();
-});
-
-// ローカルの画像を選ぶとき
+// ファイル選択
 fileInput.addEventListener("change", (e) => {
-
-  // 選択されたファイルの1つ目を取得して処理
+  // inputで選ばれたファイルの1つ目を処理します。
   handleFile(e.target.files[0]);
 });
 
+// クリックでアップロード
+uploadArea.addEventListener("click", () => {
+  // 見えないinputをクリックしたことにして、ファイル選択画面を開きます。
+  fileInput.click();
+});
 
-// ===============================
-//ドラッグアンドドロップ
-//================================
-
-// ドラッグ中（エリアの上にファイルが来たとき）
+// ドラッグ＆ドロップ
 uploadArea.addEventListener("dragover", (e) => {
-
-  // デフォルト動作を止める（これがないとドロップできない）
+  // デフォルト動作を止めると、dropイベントを受け取れるようになります。
   e.preventDefault();
-
-  // 見た目を変える（枠を青くするなど）
   uploadArea.classList.add("dragover");
 });
 
-
-// ドラッグが外れたとき
 uploadArea.addEventListener("dragleave", () => {
-
-  // 見た目を元に戻す
   uploadArea.classList.remove("dragover");
 });
 
-
-// ドロップしたとき（ここが本処理）
 uploadArea.addEventListener("drop", (e) => {
-
-  // デフォルト動作を止める（ファイルが開かれるのを防ぐ）
   e.preventDefault();
-
-  // 見た目を元に戻す
   uploadArea.classList.remove("dragover");
-
-  // ドロップされたファイルを取得（1つ目）
-  const file = e.dataTransfer.files[0];
-
-  // 共通処理に渡す
-  handleFile(file);
+  // ドロップされたファイルの1つ目を処理します。
+  handleFile(e.dataTransfer.files[0]);
 });
 
-
-// ===============================
-// ペースト（Ctrl+V / 右クリック貼り付け）
-// ===============================
-
-// ペーストされたとき
+// ペースト
 document.addEventListener("paste", (e) => {
-
-  // クリップボードの中身を取得
-  const items = e.clipboardData.items;
-
-  // 中身を1つずつ確認
-  for (let item of items) {
-
-    // 画像ファイルかどうかチェック
-    //startsWith() は String 値のメソッドで、文字列が引数で指定された文字列で始まるかを判定して true か false を返す。
+  // クリップボードの中から、画像データだけを探します。
+  for (let item of e.clipboardData.items) {
     if (item.type.startsWith("image/")) {
-
-      // 画像データをファイルとして取得
-      // getAsFile() → クリップボードの画像を「ファイル」として取り出す
-      const file = item.getAsFile();
-
-      // 共通処理に渡す
-      handleFile(file);
-
-      // 1つ処理したら終了
+      handleFile(item.getAsFile());
       break;
     }
   }
 });
 
+qualitySlider.addEventListener("input", () => {
+  // スライダーを動かしたら表示値を更新し、画像も作り直します。
+  qualityValue.textContent = qualitySlider.value;
+  draw();
+});
+
+// ダウンロード
+downloadBtn.addEventListener("click", downloadImage);
+
+
 // ===============================
-// 共通処理
+// ファイル処理
 // ===============================
 function handleFile(file) {
 
-  // -------------------------------
-  // ファイルのチェック
-  // -------------------------------
-
-  // ファイルが存在しない、ファイルの種類（例: "image/png"）ではないか
+  // ファイルがない、または画像ではない場合は処理を止めます。
   if (!file || !file.type.startsWith("image/")) {
-
-    // 警告を表示
     alert("画像ファイルを選択してください");
-
     return;
   }
-  
-  // FileReader → ファイルを読み込むための専用オブジェクト
+
+  // FileReaderは、選択したファイルをブラウザ上で読み込むためのAPIです。
   const reader = new FileReader();
 
-  reader.onload = (event) => {
-
-    // event.target.result → 読み込んだファイルのデータ
-    // img.src に入れると画像として表示できる
-    img.src = event.target.result;
+  reader.onload = (e) => {
+    // 読み込んだ画像データをimg.srcに入れると、画像として扱えるようになります。
+    img.src = e.target.result;
   };
 
-  // readAsDataURL() →
-  // ファイルを「画像として表示できる形式（データURL）」に変換
+  // ファイルをData URL形式で読み込みます。
   reader.readAsDataURL(file);
 }
 
+
 // ===============================
-// リサイズと圧縮処理後Afterを更新
+// 画像読み込み後
+// ===============================
+img.onload = () => {
+
+  // 元画像をBefore側に表示します。
+  beforeImage.src = img.src;
+
+  // 画像がある状態のCSSに切り替えます。
+  compare.classList.add("has-image");
+
+  // 入力初期値
+  widthInput.value = img.width;
+  heightInput.value = img.height;
+
+  // 縦横比固定で使うため、元画像の比率を保存します。
+  aspectRatio = img.width / img.height;
+
+  // 画像を読み込んだら、すぐにプレビューとダウンロード用画像を作ります。
+  draw();
+};
+
+
+// ===============================
+// 描画処理
 // ===============================
 function draw() {
 
-  // -------------------------------
-  // 入力値の取得
-  // -------------------------------
-
-  //  入力欄の値（文字列）をparseInt() で数値に変換（整数）
+  // 入力欄と品質スライダーの値を数値として取り出します。
   const width = parseInt(widthInput.value);
-
   const height = parseInt(heightInput.value);
-
-  // parseFloat() → 小数の数値に変換
   const quality = parseFloat(qualitySlider.value);
 
+  // 画像やサイズがまだない場合は、何もしません。
+  if (!img.src || !width || !height) return;
 
-  // 幅または高さが無効（0やNaN）の場合は処理しない
-  if (!width || !height) return;
+  // 現在の設定でダウンロードされる予定のサイズを表示します。
+  estimatedSizeText.textContent = `${width} x ${height} px`;
 
+  // ダウンロード用とプレビュー用は目的が違うので、別々に作ります。
+  createDownloadImage(width, height, quality);
+  createPreviewImage(quality);
+}
 
-  // -------------------------------
-  // 比較用として画像を残すためBeforeは変更しない
-  // -------------------------------
+function createDownloadImage(width, height, quality) {
+  // canvasは、画像を描画したりリサイズしたりできるHTML要素です。
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
+  // ダウンロード用は、入力された幅と高さで作ります。
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(img, 0, 0, width, height);
 
-  // -------------------------------
-  // After用の一時canvasを作成
-  // -------------------------------
-
-  // document.createElement("canvas")
-  // → 新しいcanvas要素をメモリ上に作る（画面には表示されない）
-  const tempCanvas = document.createElement("canvas");
-
-  // getContext("2d")
-  // → canvasに描画するための機能を取得
-  const tempCtx = tempCanvas.getContext("2d");
-
-
-  // -------------------------------
-  // リサイズ設定
-  // -------------------------------
-
-  // canvasのサイズを指定
-  tempCanvas.width = width;
-  tempCanvas.height = height;
-
-  // drawImage(画像, x, y, 幅, 高さ)
-  // → 指定サイズに引き伸ばして描画（＝リサイズ）
-  tempCtx.drawImage(img, 0, 0, width, height);
-
-
-  // -------------------------------
-  // 圧縮してデータ化
-  // -------------------------------
-
-  // toBlob()
-  // → canvasの内容を「画像ファイル（blob）」として出力
-  // 第2引数 → 形式（image/jpeg）
-  // 第3引数 → 品質（0〜1）
-  tempCanvas.toBlob((blob) => {
-
-    // 何も生成されなかった場合は終了
+  // canvasの内容をJPEG画像データに変換します。
+  canvas.toBlob((blob) => {
     if (!blob) return;
 
-
-    // -------------------------------
-    // 現在の画像データを保存
-    // -------------------------------
-
-    // 後でダウンロードに使うため保持
+    // 後でダウンロードボタンから使えるように保存します。
     currentBlob = blob;
 
-
-    // -------------------------------
-    // 容量を表示
-    // -------------------------------
-
-    // blob.size → バイト数
-    // /1024 → KBに変換
-    // toFixed(1) → 小数1桁に丸める
-    const sizeKB = (blob.size / 1024).toFixed(1);
-
-    // 画面に表示
-    fileSizeText.textContent = sizeKB + " KB";
-
-
-    // -------------------------------
-    // プレビュー画像を更新
-    // -------------------------------
-
-    // 古いURLがあれば解放（メモリ節約）
-    if (currentBlobUrl) {
-      URL.revokeObjectURL(currentBlobUrl);
-    }
-
-    // createObjectURL()
-    // → blobを一時的なURLに変換（imgで表示できるようにする）
-    currentBlobUrl = URL.createObjectURL(blob);
-
-    // Afterのimgにセットして表示
-    afterImage.src = currentBlobUrl;
+    // Blobのサイズから、画像容量をKBで表示します。
+    fileSizeText.textContent =
+      (blob.size / 1024).toFixed(1) + " KB";
 
   }, "image/jpeg", quality);
 }
 
+function createPreviewImage(quality) {
+  // プレビュー用は表示比較が目的なので、元画像サイズのまま品質だけ変えます。
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+
+    // 古いプレビューURLを破棄して、メモリを無駄に使わないようにします。
+    if (previewBlobUrl) {
+      URL.revokeObjectURL(previewBlobUrl);
+    }
+
+    // Blobをimgタグで表示できるURLに変換します。
+    previewBlobUrl = URL.createObjectURL(blob);
+    afterImage.src = previewBlobUrl;
+
+    // スライダー維持
+    updateCompareSlider();
+}, "image/jpeg", quality);
+}
+//横を変えたら → 縦を自動更新
+widthInput.addEventListener("input", () => {
+  // 縦横比固定がONなら、幅に合わせて高さを自動計算します。
+  if (lockRatioCheckbox.checked && aspectRatio) {
+    heightInput.value = Math.round(widthInput.value / aspectRatio);
+  }
+  draw();
+});
+// 縦を変えたら → 横を自動更新
+heightInput.addEventListener("input", () => {
+  // 縦横比固定がONなら、高さに合わせて幅を自動計算します。
+  if (lockRatioCheckbox.checked && aspectRatio) {
+    widthInput.value = Math.round(heightInput.value * aspectRatio);
+  }
+  draw();
+});
+
+
 // ===============================
-// ダウンロード処理（After画像を保存）
+// ダウンロード
 // ===============================
 function downloadImage() {
 
-  // -------------------------------
-  // ① 画像データが存在するかチェック
-  // -------------------------------
-
-  // まだ生成されていない場合は保存できない
+  // まだ画像が作られていない場合はダウンロードできません。
   if (!currentBlob) {
-
-    // ユーザーにエラーを表示
     alert("画像がまだ生成されていません");
-
-    // 処理を終了
     return;
   }
 
-
-  // -------------------------------
-  // ② ダウンロード用のリンクを作る
-  // -------------------------------
-
-  // document.createElement("a")
-  // → <a>タグ（リンク）をプログラムで作成
+  // aタグを一時的に作り、クリックしたことにしてダウンロードします。
   const link = document.createElement("a");
-
-
-  // -------------------------------
-  // ③ ダウンロード設定
-  // -------------------------------
-
-  // download属性 → 保存するファイル名を指定
   link.download = "resized.jpg";
-
-  // URL.createObjectURL()
-  // → blob（画像データ）を「一時的なURL」に変換
   link.href = URL.createObjectURL(currentBlob);
-
-
-  // -------------------------------
-  // ④ 自動クリックでダウンロード実行
-  // -------------------------------
-
-  // click() → プログラムでリンクをクリックしたことにする
-  // → ダウンロードが開始される
   link.click();
 }
+
+// ===============================
+// 比較スライダー
+// =============================== 
+function updateCompareSlider() {
+  // スライダーの値を%にして、overlayの幅に使います。
+  const position = compareSlider.value + "%";
+
+  // overlayの幅が変わると、After画像の見える範囲が変わります。
+  overlay.style.width = position;
+
+  // CSS変数も更新して、スライダーの色の境目を動かします。
+  compareSlider.style.setProperty("--compare-position", position);
+}
+
+compareSlider.addEventListener("input", updateCompareSlider);

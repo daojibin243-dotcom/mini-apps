@@ -1,0 +1,73 @@
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DotCanvas</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>DotCanvas</h1>
+
+    <div class="app">
+
+      <!-- グリッドを配置するエリア -->
+      <div class="canvas-wrapper">
+
+        <!-- 下絵表示用 -->
+        <img id="guideImage">
+
+        <!-- グリッド -->
+        <div id="grid"></div>
+
+      </div>
+
+      
+      <div class="sidebar">
+
+      <!-- メニュー・パレット -->
+      <!--サイズ変更-->
+      <!--グリッドサイズ調整-->
+      <select id="gridSize">
+        <option value="16">16×16</option>
+        <option value="32">32×32</option>
+      </select>
+      <!-- カラーピッカー -->
+      <input type="color" id="colorPicker" value="#000000">
+      <!-- カラーパレット -->
+      <div id="palette"></div>
+
+      <button class="tool-btn" onclick="setTool('pen')">ペン</button>
+      <button class="tool-btn" onclick="setTool('eraser')">消しゴム</button>
+      <button class="tool-btn" onclick="setTool('picker')">スポイト</button>
+      <button id="addColor">色を登録</button>
+      <button class="tool-btn" onclick="setTool('transparent')">透明ペン</button>
+
+      <!--下絵の入力-->
+      <input type="file" id="uploadImage" accept="image/*">
+      <button onclick="removeGuide()">下絵削除</button>
+
+      <!--PNG保存機能-->
+      <button onclick="saveAsPNG()">PNG保存</button>
+
+      <!--JSON保存機能-->
+      <button onclick="saveAsJSON()">JSON保存</button>
+      <input type="file" id="loadJson">
+
+      <!-- グリッドを初期状態に戻すボタン -->
+      <button onclick="clearGrid()" class="danger">クリア</button>
+
+      <label>
+        <input type="checkbox" id="toggleGrid" checked>
+        グリッド線表示
+      </label>
+
+      </div>
+
+      
+    </div>
+
+
+  </body>
+  <script src="script.js"></script>
+</html>

@@ -1,0 +1,172 @@
+/* 全体のフォントと中央寄せ */
+body {
+  font-family: sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ← 横中央 */
+
+  margin: 0;
+  padding: 20px;
+}
+
+/* 配置 */
+.app {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  width: fit-content;
+}
+
+/* サイドバー */
+.sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f4f6f8;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* ドットを並べるグリッド */
+#grid {
+  display: grid;
+
+  /* 横に16マス並べる（20px × 16列） */
+  grid-template-columns: repeat(16, 20px);
+
+  /* マスの間の隙間 */
+  gap: 0px;
+
+  /* 中央に配置 */
+  justify-content: center;
+
+  margin-top: 20px;
+}
+
+/* 各マス（1ピクセル） */
+/*JSでスタイルを付与*/
+.cell {
+  width: 20px;
+  height: 20px;
+
+  /* 初期色は白 */
+  background: #fff;
+
+  /* outlineを使用してグリッド線ONOFF切り替え時にドットが動かないようにしている */
+  border: none;
+  outline: 1px solid #ccc;
+
+  /* マウスカーソルをポインターに */
+  cursor: pointer;
+
+  user-select: none;        /* テキスト選択禁止 */
+  -webkit-user-drag: none;  /* 画像ドラッグ防止 */
+}
+
+.cell.transparent {
+  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+                    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #ccc 75%),
+                    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 10px 10px;
+}
+
+/* グリッド線なし */
+.no-grid .cell {
+  outline: none;
+}
+
+/*ボタン*/
+.danger {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* カラーパレット */
+#palette {
+  margin-top: 10px;
+}
+
+.palette-color {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  margin: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/*ツールボタンの見た目*/
+.tool-btn {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background: #f4f6f8;
+  cursor: pointer;
+}
+
+.tool-btn.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/*カーソル切り替え*/
+.cell {
+  cursor: crosshair;
+}
+
+.grid-eraser .cell {
+  cursor: not-allowed;
+}
+
+.grid-picker .cell {
+  cursor: copy;
+}
+
+.grid-transparent .cell {
+  cursor: cell;
+}
+
+/*下絵透かし用*/
+.canvas-wrapper {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* 下絵 */
+#guideImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  opacity: 0.3; /* ← 透かし */
+
+  pointer-events: none; /* ← クリックを邪魔しない */
+
+  z-index: 0;
+
+  display: none;/*隠しておく*/
+}
+
+/* グリッド */
+#grid {
+  display: grid;
+  position: relative;
+  z-index: 1;
+
+  width: fit-content;
+}

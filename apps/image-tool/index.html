@@ -7,44 +7,121 @@
 </head>
 <body>
 
-<div class="container">
-  <h1>画像リサイズ＋品質調整</h1>
-
-  <div class="upload-area" id="uploadArea">
-    <p>クリック・ドラッグ＆ドロップ・貼り付けで画像を追加</p>
-    <p class="sub">「Ctrl+V」で貼り付けできます</p>
-  <!--acceptで制限する-->
-  <input type="file" id="upload" accept="image/*">
-</div>
-
-  <div class="row">
-    幅: <input type="number" id="width">
-    高さ: <input type="number" id="height">
+<!-- タイトル -->
+<header class="app-header">
+  <div class="app-header-inner">
+    <h1>画像リサイズ＋品質調整</h1>
   </div>
+</header>
 
-  <div class="row">
-    品質: <input type="range" id="quality" min="0.05" max="1" step="0.01" value="0.8">
-    <span id="qualityValue">0.8</span>
-  </div>
+<!--
+  PCでは左が操作エリア、右がプレビューエリアになります。
+  2カラムのレイアウト
+-->
+<div class="app">
+  <!-- 左側の操作パネル -->
+  <aside class="sidebar">
+    <!-- 画像を追加するエリア。クリック、ドラッグ&ドロップ、貼り付けに対応します。 -->
+    <div class="tool-section">
+      <div class="section-title">
+        <span class="icon">UP</span>
+        <span>画像</span>
+      </div>
 
-  <div class="row">
-    容量: <span id="fileSize">-</span>
-  </div>
+      <div class="upload-area" id="uploadArea">
+        <p>画像を追加</p>
+        <p class="sub">クリック・ドラッグ＆ドロップ・Ctrl+V</p>
 
-  <div class="preview">
-    <div>
-      <p>Before</p>
-      <canvas id="beforeCanvas"></canvas>
+        <!-- 実際のファイル選択inputです。見た目はupload-areaで作るので hidden にしています。 -->
+        <input type="file" id="upload" accept="image/*" hidden>
+      </div>
     </div>
-    <div>
-      <p>After</p>
-      <img id="afterImage">
-    </div>
-  </div>
 
-  <div class="row">
-    <button onclick="downloadImage()">ダウンロード</button>
-  </div>
+    <!-- ダウンロード時の画像サイズを入力するエリアです。 -->
+    <div class="tool-section">
+      <div class="section-title">
+        <span class="icon">PX</span>
+        <span>サイズ</span>
+      </div>
+
+      <div class="control-group">
+        <label>高さ <input type="number" id="height" min="1"></label>
+        <label>幅 <input type="number" id="width" min="1"></label>
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox" id="lockRatio">
+        縦横比を固定
+      </label>
+    </div>
+
+    <!-- 品質を調整するエリア -->
+    <div class="tool-section">
+      <div class="section-title">
+        <span class="icon">Q</span>
+        <span>品質</span>
+      </div>
+
+      <div class="control-group">
+        <label for="quality">圧縮品質</label>
+        <div class="range-row">
+          <input type="range" id="quality" min="0.05" max="1" step="0.01" value="0.8">
+          <span id="qualityValue">0.8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 現在の設定でダウンロードされる画像の情報を表示 -->
+    <div class="tool-section">
+      <div class="section-title">
+        <span class="icon">OUT</span>
+        <span>出力</span>
+      </div>
+
+      <div class="output-list">
+        <div class="info-row">
+          <span>DLサイズ予想</span>
+          <strong id="estimatedSize">-</strong>
+        </div>
+        <div class="info-row">
+          <span>形式</span>
+          <strong>JPEG</strong>
+        </div>
+        <div class="info-row">
+          <span>容量</span>
+          <strong id="fileSize">-</strong>
+        </div>
+      </div>
+    </div>
+
+    <button id="downloadBtn">ダウンロード</button>
+  </aside>
+
+  <!-- 右側のプレビューエリア。元画像と変換後画像を重ねて比較します。 -->
+  <main class="preview-panel">
+    <div class="compare">
+      <!-- 画像がまだ選ばれていないときだけ表示されるメッセージ -->
+      <p class="preview-placeholder">ここにプレビューが表示されます。</p>
+
+      <!-- 元画像です。下側に表示されます。 -->
+      <img id="beforeImage" alt="元画像">
+
+      <!-- 変換後画像です。overlayの幅を変えることでBefore/Afterを比較。 -->
+      <div class="overlay">
+        <img id="afterImage" alt="変換後の画像">
+      </div>
+    </div>
+
+    <!-- 比較用スライダーです。動かすと overlay の幅が変わります。 -->
+    <div class="compare-control">
+      <div class="compare-labels">
+        <span>Before</span>
+        <span>左右に動かして品質を比較</span>
+        <span>After</span>
+      </div>
+      <input type="range" id="compareSlider" min="0" max="100" value="50">
+    </div>
+  </main>
 </div>
 
 <script src="script.js"></script>
