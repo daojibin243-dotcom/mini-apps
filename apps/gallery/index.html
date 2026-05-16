@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dogs Gallery</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- サイドバー -->
+  <aside class="sidebar">
+
+    <h2>Dogs Gallery</h2>
+
+    <p class="sidebar-text">
+      犬種を選択すると画像が表示されます
+    </p>
+
+    <!-- 検索 -->
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="犬種を検索"
+    >
+
+    <!-- 犬種一覧 -->
+    <div id="breedList"></div>
+
+  </aside>
+
+
+  <!-- メイン -->
+  <main class="main">
+
+    <div class="top-bar">
+
+      <h1>Dogs Gallery</h1>
+
+      <p id="status"></p>
+
+    </div>
+
+
+    <!-- ローディング -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+
+    <!-- ギャラリー -->
+    <div class="gallery"></div>
+
+  </main>
+
+
+  <!-- モーダル -->
+  <div id="modal" class="modal hidden">
+
+    <span id="closeModal">×</span>
+
+    <img id="modalImage">
+
+    <p id="modalText"></p>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,270 @@
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:sans-serif;
+  display:flex;
+  /*Viewport Height（ビューポートの高さ）の略で、画面表示領域の高さを基準にした単位*/
+  min-height:100vh;
+  /*グラデーション背景*/
+  background:
+    linear-gradient(
+      /*degは「degree（度）」の略で、角度を指定する単位*/
+      135deg,
+      #f7f4ee,
+      #ece5d8
+    );
+  color:#333;
+}
+
+
+/* サイドバー */
+
+.sidebar{
+  width:280px;
+  background:rgba(255,255,255,0.9);
+  /*ぼかし*/
+  backdrop-filter:blur(10px);
+  border-right:1px solid #ddd;
+  padding:20px;
+  overflow-y:auto;
+}
+
+.sidebar h2{
+  margin-top:0;
+}
+
+.sidebar-text{
+  font-size:14px;
+  color:#666;
+  margin-bottom:16px;
+}
+
+#searchInput{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-bottom:16px;
+}
+/*JSで生成している、犬種を表示するラベル*/
+label{
+  display:block;
+  margin-bottom:10px;
+  padding:8px;
+  border-radius:8px;
+  transition:0.2s;
+  cursor:pointer;
+}
+
+label:hover{
+  background:#f3ede3;
+}
+
+input[type="checkbox"]{
+  margin-right:8px;
+}
+
+
+/* メイン */
+
+.main{
+  /*flex:1は、フレックスアイテムが利用可能なスペースをすべて占めることを意味します。
+  flex: 1 1 0%;と同等で、flex-grow: 1; flex-shrink: 1; flex-basis: 0%;をまとめたショートハンドプロパティです。
+  */
+  flex:1;
+  padding:20px;
+  /*overflow-y は、要素の内容が縦方向（上下）にボックスの範囲を超えた場合に、その表示方法を指定する。
+  auto:内容がボックス内に収まらない場合のみスクロールバーを表示する*/
+  overflow-y:auto;
+}
+
+.top-bar{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+h1{
+  margin-bottom:10px;
+}
+
+#status{
+  color:#666;
+}
+
+
+/* ローディング */
+
+.loading{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.hidden{
+  display:none;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:6px solid #ddd;
+  border-top:6px solid #555;
+  border-radius:50%;
+  margin:0 auto 10px;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+  from{
+    transform:rotate(0deg);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
+
+}
+
+
+/* ギャラリー */
+
+.gallery{
+  /*CSS Grid Layout（グリッドレイアウト）を使用して、ギャラリーのレイアウトを定義しています。*/
+  display:grid;
+  /*画像を5つ表示、大きさは均等*/
+  /*fr = fraction（分数、比率）、利用可能なスペースを比率で分配*/
+  grid-template-columns:repeat(5,1fr);
+  /*要素同士の間隔*/
+  gap:20px;
+}
+
+.card{
+  /*position:relativeは、要素の位置を相対的に指定するプロパティ。*/
+  position:relative;
+  /*overflow:hiddenは、要素の内容がボックスの範囲を超えた場合に、その部分を非表示にする*/
+  overflow:hidden;
+  border-radius:18px;
+  background:white;
+  box-shadow:0 4px 14px rgba(0,0,0,0.1);
+  transition:0.25s;
+  cursor:pointer;
+}
+
+.card:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 10px 24px rgba(0,0,0,0.18);
+}
+
+.card img{
+  width:100%;
+  /*aspect-ratioは、要素の幅と高さの比率を指定するプロパティ。1/1は、幅と高さが等しいことを意味します。*/
+  aspect-ratio:1/1;
+  /*object-fitは、要素の内容がボックス内に収まるように調整するプロパティ。coverは、要素の内容をボックス全体に収めるように調整します。*/
+  object-fit:cover;
+  display:block;
+}
+
+.card-info{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:12px;
+  background:rgba(0,0,0,0.6);
+  color:white;
+  opacity:0;
+  transition:0.25s;
+}
+
+.card:hover .card-info{
+  opacity:1;
+}
+
+
+/* モーダル */
+
+.modal{
+  /*position:fixedは、要素をブラウザのビューポートに対して固定するプロパティ。*/
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  display:flex;
+  /*flex-direction:columnは、フレックスコンテナの主軸を縦方向に設定するプロパティ。*/
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:20px;
+  opacity:1;
+  /*visibilityは、要素の表示状態を指定するプロパティ。visibleは、要素が表示されることを意味します。*/
+  visibility:visible;
+  transition:0.2s;
+}
+
+.modal.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.modal img{
+  max-width:90%;
+  max-height:80vh;
+  border-radius:16px;
+}
+
+#modalText{
+  color:white;
+  margin-top:16px;
+  font-size:20px;
+}
+
+#closeModal{
+  position:absolute;
+  top:20px;
+  right:30px;
+  font-size:40px;
+  color:white;
+  cursor:pointer;
+}
+
+
+/* レスポンシブ */
+
+@media(max-width:1200px){
+
+  .gallery{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+}
+
+@media(max-width:900px){
+
+  .gallery{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:700px){
+
+  body{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    height:260px;
+    border-right:none;
+    border-bottom:1px solid #ddd;
+  }
+
+  .gallery{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}

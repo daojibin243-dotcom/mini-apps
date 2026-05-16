@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Typing Game</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="top-bar">
+
+      <div>
+        <p class="label">コードタイピングゲーム</p>
+        <h1>プログラミングタイピング</h1>
+      </div>
+
+      <div class="control-wrapper">
+
+        <div class="control-box">
+          <label for="language-select">言語を選択</label>
+
+          <select id="language-select">
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="javascript">JavaScript</option>
+          </select>
+        </div>
+
+        <div class="control-box">
+          <label for="time-select">制限時間</label>
+
+          <select id="time-select">
+            <option value="30">30秒</option>
+            <option value="60" selected>60秒</option>
+            <option value="120">120秒</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="status-area">
+
+        <div class="status-box">
+          <p class="label">TIME</p>
+          <span id="time">60</span>
+        </div>
+
+        <div class="status-box">
+          <p class="label">WPM</p>
+          <span id="wpm">0</span>
+        </div>
+
+      </div>
+
+    </header>
+
+    <main>
+
+      <section class="question-card">
+
+        <div class="question-header">
+
+          <div>
+            <p class="label">現在の問題</p>
+            <h2 id="title"></h2>
+          </div>
+
+          <p id="accuracy">Accuracy: 100%</p>
+
+        </div>
+
+        <div id="code-display" class="code-display"></div>
+
+      </section>
+
+      <div class="typing-guide">
+        入力でタイピングゲームスタート
+      </div>
+
+      <textarea
+        id="typing-input"
+        placeholder="ここにコードを入力してください"
+        spellcheck="false"
+      ></textarea>
+
+    </main>
+
+  </div>
+
+
+  <div id="result-screen" class="result-screen hidden">
+
+    <div class="result-container">
+
+      <h2>RESULT</h2>
+
+      <div class="result-grid">
+
+        <div class="result-box">
+          <p class="label">入力文字数</p>
+          <span id="result-typed"></span>
+        </div>
+
+        <div class="result-box">
+          <p class="label">ミス数</p>
+          <span id="result-miss"></span>
+        </div>
+
+        <div class="result-box">
+          <p class="label">正確率</p>
+          <span id="result-accuracy"></span>
+        </div>
+
+        <div class="result-box">
+          <p class="label">WPM</p>
+          <span id="result-wpm"></span>
+        </div>
+
+      </div>
+
+
+      <div class="result-list">
+
+        <h3>出題コード一覧</h3>
+
+        <div id="completed-list"></div>
+
+      </div>
+
+      <button id="restart-btn">もう一度遊ぶ</button>
+
+    </div>
+
+  </div>
+
+  <script src="questions/html.js"></script>
+  <script src="questions/css.js"></script>
+  <script src="questions/javascript.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
