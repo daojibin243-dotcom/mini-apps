@@ -17,69 +17,215 @@ let currentKey = null;
 
 function getStorageItems(){
 
+  // localStorageに保存されている
+  // 全てのkey名を配列で取得
+  //
+  // 例:
+  // ["theme", "user", "memo"]
+  //
   return Object.keys(localStorage).map(key => {
 
+    // keyに対応するvalueを取得
+    //
+    // 例:
+    // localStorage.getItem("theme")
+    // → "dark"
+    //
     const value = localStorage.getItem(key);
 
+    // keyごとの情報を
+    // オブジェクトとして返す
+    //
+    // key   : 保存名
+    // value : 保存データ
+    // size  : データ容量(byte)
+    //
     return {
+
       key,
+
       value,
+
+      // データサイズを取得
+      //
+      // Blobを使うことで
+      // byteサイズを計算できる
+      //
+      // 例:
+      // 15 B
+      // 2 KB
+      //
       size: new Blob([value]).size
+
     };
 
   });
 
 }
 
+//Storage一覧を画面に表示する関数
 function renderStorageList(){
 
-  const keyword = searchInput.value.toLowerCase();
+  // 検索欄の文字を取得
+  //
+  // toLowerCase()で小文字化して
+  // 大文字小文字を区別しない検索にする
+  //
+  // 例:
+  // "USER" → "user"
+  //
+  const keyword =
+    searchInput.value.toLowerCase();
 
+  // 一度一覧を空にする
   storageList.innerHTML = "";
 
+  // localStorageのデータ一覧を取得
+  //
+  // getStorageItems() から:
+  // [
+  //   { key, value, size }
+  // ]
+  //
   const items = getStorageItems();
 
-  items
-    .filter(item =>
-      item.key.toLowerCase().includes(keyword)
-    )
-    .forEach(item => {
 
-      const li = document.createElement("li");
+  // 検索キーワードに一致する
+  // itemだけを抽出
+  //
+  // includes() は
+  // 「文字を含むか」判定
+  //
+  const filteredItems = items.filter(
 
-      li.className = "storage-item";
+    item =>
 
-      if(item.key === currentKey){
-        li.classList.add("active");
-      }
+      item.key
+        .toLowerCase()
+        .includes(keyword)
 
-      li.innerHTML = `
-        <div class="storage-key">
-          ${item.key}
-        </div>
+  );
 
-        <div class="storage-size">
-          ${formatBytes(item.size)}
-        </div>
-      `;
 
-      li.addEventListener("click", () => {
+  // 「データがありません」
+  // メッセージ要素を取得
+  //
+  const emptyMessage =
+    document.getElementById(
+      "emptyMessage"
+    );
 
-        currentKey = item.key;
 
-        currentKeyText.textContent = item.key;
+  // 検索結果が0件なら
+  // emptyMessageを表示
+  //
+  if(filteredItems.length === 0){
 
-        valueEditor.value = formatJson(item.value);
+    emptyMessage.style.display =
+      "block";
 
-        renderStorageList();
+  }else{
 
-        addLog(`選択: ${item.key}`);
+    // データがあるなら非表示
+    //
+    emptyMessage.style.display =
+      "none";
 
-      });
+  }
 
-      storageList.appendChild(li);
+
+  // filter後のデータを
+  // 1件ずつ処理
+  //
+  filteredItems.forEach(item => {
+
+
+    // <li> 要素を新規作成
+    //
+    const li =
+      document.createElement("li");
+
+
+    // CSSクラス追加
+    //
+    li.className = "storage-item";
+
+
+    // 現在選択中のkeyなら
+    // activeクラス追加
+    //
+    // 青背景表示など用
+    //
+    if(item.key === currentKey){
+
+      li.classList.add("active");
+
+    }
+
+
+    // liの中身を作成
+    //
+    // key名
+    // サイズ
+    //
+    li.innerHTML = `
+
+      <div class="storage-key">
+        ${item.key}
+      </div>
+
+      <div class="storage-size">
+        ${formatBytes(item.size)}
+      </div>
+
+    `;
+
+
+    // liクリック時の処理
+    //
+    li.addEventListener("click", () => {
+
+
+      // 現在選択中keyを更新
+      //
+      currentKey = item.key;
+
+
+      // 画面上の現在key表示変更
+      //
+      currentKeyText.textContent =
+        item.key;
+
+
+      // valueを整形して
+      // textareaへ表示
+      //
+      // JSONなら見やすく整形
+      //
+      valueEditor.value =
+        formatJson(item.value);
+
+
+      // 一覧を再描画
+      //
+      // active表示更新用
+      //
+      renderStorageList();
+
+
+      // ログ追加
+      //
+      addLog(`選択: ${item.key}`);
 
     });
+
+
+    // 完成したliを
+    // 一覧へ追加
+    //
+    storageList.appendChild(li);
+
+  });
 
 }
 

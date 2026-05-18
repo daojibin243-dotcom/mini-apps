@@ -161,3 +161,58 @@ button.danger{
   font-size:12px;
   margin-bottom:4px;
 }
+
+.sub-title{
+  margin-top:6px;
+  opacity:0.7;
+  font-size:14px;
+}
+
+.guide-section{
+  padding:16px 20px;
+  border-bottom:1px solid #333;
+  background:#181818;
+}
+
+.guide-section details{
+  background:#222;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.guide-section summary{
+  cursor:pointer;
+  padding:14px;
+  font-weight:bold;
+}
+
+.guide-content{
+  padding:16px;
+  line-height:1.8;
+}
+
+.guide-content h3{
+  margin-top:20px;
+  margin-bottom:10px;
+}
+
+.sample-code{
+  background:#111;
+  padding:14px;
+  border-radius:10px;
+  overflow:auto;
+  color:#00ff88;
+}
+
+.panel-description{
+  margin-top:4px;
+  font-size:12px;
+  opacity:0.6;
+}
+
+.empty-message{
+  padding:20px;
+  opacity:0.7;
+  line-height:1.7;
+  font-size:14px;
+}

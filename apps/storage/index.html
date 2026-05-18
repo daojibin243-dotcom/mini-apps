@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -11,7 +10,13 @@
 <body>
 
   <header class="header">
-    <h1>Storage Inspector</h1>
+    <div>
+      <h1>Storage Inspector</h1>
+
+      <p class="sub-title">
+        現在のページに保存されている localStorage を確認・編集できるツール
+      </p>
+    </div>
 
     <div class="actions">
       <button id="refreshBtn">更新</button>
@@ -19,13 +24,77 @@
     </div>
   </header>
 
+
+  <!-- 初回ガイド -->
+  <section class="guide-section">
+
+    <details open>
+      <summary>
+        初めて使う人向けガイド
+      </summary>
+
+      <div class="guide-content">
+
+        <h3>このアプリでできること</h3>
+
+        <ul>
+          <li>localStorage に保存されたデータを見る</li>
+          <li>JSONデータを見やすく確認する</li>
+          <li>保存データを編集する</li>
+          <li>不要データを削除する</li>
+        </ul>
+
+
+        <h3>localStorageとは？</h3>
+
+        <p>
+          ブラウザにデータを保存できる仕組みです。
+          メモアプリの保存データやテーマ設定などによく使われます。
+        </p>
+
+
+        <h3>まずは試してみましょう</h3>
+
+        <ol>
+          <li>F12キーを押す</li>
+          <li>「Console」タブを開く</li>
+          <li>以下をコピペしてEnter</li>
+        </ol>
+
+
+<pre class="sample-code">localStorage.setItem(
+  "user",
+  JSON.stringify({
+    name: "Alice",
+    level: 10
+  })
+);
+</pre>
+
+        <p>
+          その後「更新」ボタンを押すと、左側に user が表示されます。
+        </p>
+
+      </div>
+
+    </details>
+
+  </section>
+
+
   <main class="container">
 
     <!-- 左 -->
     <section class="panel left-panel">
 
       <div class="panel-header">
-        <h2>Storage一覧</h2>
+        <div>
+          <h2>Storage一覧</h2>
+
+          <p class="panel-description">
+            保存されている key 一覧
+          </p>
+        </div>
 
         <input
           type="text"
@@ -34,44 +103,76 @@
         />
       </div>
 
+
+      <!-- 空表示 -->
+      <div id="emptyMessage" class="empty-message">
+        localStorageにデータがありません。
+        <br><br>
+        Consoleからデータを保存すると表示されます。
+      </div>
+
+
       <ul id="storageList" class="storage-list"></ul>
 
     </section>
+
 
     <!-- 中央 -->
     <section class="panel center-panel">
 
       <div class="panel-header">
-        <h2>データ詳細</h2>
+
+        <div>
+          <h2>データ詳細</h2>
+
+          <p class="panel-description">
+            選択中データの内容
+          </p>
+        </div>
 
         <button id="saveBtn">
           保存
         </button>
+
       </div>
 
+
       <div class="detail-top">
+
         <div>
-          <span class="label">Key:</span>
+          <span class="label">現在のKey:</span>
           <span id="currentKey">未選択</span>
         </div>
 
         <button id="deleteBtn" class="danger">
           削除
         </button>
+
       </div>
+
 
       <textarea
         id="valueEditor"
         spellcheck="false"
+        placeholder="左側のStorageを選択すると内容が表示されます"
       ></textarea>
 
     </section>
+
 
     <!-- 右 -->
     <section class="panel right-panel">
 
       <div class="panel-header">
-        <h2>イベントログ</h2>
+
+        <div>
+          <h2>イベントログ</h2>
+
+          <p class="panel-description">
+            保存・削除などの履歴
+          </p>
+        </div>
+
       </div>
 
       <div id="logArea" class="log-area"></div>
