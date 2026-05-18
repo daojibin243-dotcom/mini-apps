@@ -1,0 +1,85 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Storage Inspector</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>Storage Inspector</h1>
+
+    <div class="actions">
+      <button id="refreshBtn">更新</button>
+      <button id="clearLogBtn">ログ削除</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 左 -->
+    <section class="panel left-panel">
+
+      <div class="panel-header">
+        <h2>Storage一覧</h2>
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="key検索"
+        />
+      </div>
+
+      <ul id="storageList" class="storage-list"></ul>
+
+    </section>
+
+    <!-- 中央 -->
+    <section class="panel center-panel">
+
+      <div class="panel-header">
+        <h2>データ詳細</h2>
+
+        <button id="saveBtn">
+          保存
+        </button>
+      </div>
+
+      <div class="detail-top">
+        <div>
+          <span class="label">Key:</span>
+          <span id="currentKey">未選択</span>
+        </div>
+
+        <button id="deleteBtn" class="danger">
+          削除
+        </button>
+      </div>
+
+      <textarea
+        id="valueEditor"
+        spellcheck="false"
+      ></textarea>
+
+    </section>
+
+    <!-- 右 -->
+    <section class="panel right-panel">
+
+      <div class="panel-header">
+        <h2>イベントログ</h2>
+      </div>
+
+      <div id="logArea" class="log-area"></div>
+
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
